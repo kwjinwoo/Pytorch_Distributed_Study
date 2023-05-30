@@ -7,8 +7,8 @@ class SingleTrainer:
     def __init__(self, generator, discriminator, train_data, optimizer_g, optimizer_d, criterion, gpu_id,
                  use_wandb=False, config=None):
         self.gpu_id = gpu_id
-        self.generator = generator.to(gpu_id)
-        self.discriminator = discriminator.to(gpu_id)
+        self.generator = torch.compile(generator.to(gpu_id))
+        self.discriminator = torch.compile(discriminator.to(gpu_id))
         self.train_data = train_data
         self.optimizer_g = optimizer_g
         self.optimizer_d = optimizer_d

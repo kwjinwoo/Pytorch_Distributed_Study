@@ -1,5 +1,5 @@
 data_root: "/home/kist/data/celeba"
-workers: 2
+workers: 16
 batch_size: 512
 image_size: 64
 nc: 3
