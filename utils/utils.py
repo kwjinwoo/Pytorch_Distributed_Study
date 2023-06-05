@@ -6,6 +6,7 @@ import yaml
 import matplotlib.pyplot as plt
 from datetime import datetime
 import torchvision.utils as vutils
+from torch.distributed import init_process_group
 
 
 def load_config(path):
@@ -36,8 +37,16 @@ def save_generated_image(generator, nz, device):
 
     with torch.no_grad():
         generated = generator(fixed_noise).detach().cpu()
-
     generated = vutils.make_grid(generated, padding=2, normalize=True)
+
     plt.figure(figsize=(8, 8))
     plt.imshow(np.transpose(generated, (1, 2, 0)))
     plt.savefig(save_path)
+
+
+def ddp_setup(rank, world_size):
+    os.environ["MASTER_ADDR"] = "localhost"
+    os.environ["MASTER_PORT"] = "12355"
+
+    init_process_group(backend="nccl", rank=rank, world_size=world_size)
+    torch.cuda.set_device(rank)

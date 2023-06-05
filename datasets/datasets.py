@@ -1,6 +1,7 @@
 import torch
 import torchvision.datasets as dset
 import torchvision.transforms as transforms
+from torch.utils.data.distributed import DistributedSampler
 
 
 def load_dataloader(data_root, image_size, batch_size, workers, ddp=False):
@@ -14,7 +15,9 @@ def load_dataloader(data_root, image_size, batch_size, workers, ddp=False):
 
     if ddp:
         dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
-                                                 shuffle=False, num_workers=workers)
+                                                 shuffle=False, sampler=DistributedSampler(dataset),
+                                                 num_workers=3,
+                                                 pin_memory=True)
     else:
         dataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
                                                  shuffle=True, num_workers=workers)
